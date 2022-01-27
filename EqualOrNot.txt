@@ -1,0 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Reverse
+{
+    internal class Program
+    {
+        static void Main(string[] args) 
+        {
+            string s1=Console.ReadLine();
+            int n=s1.Length;
+            string s2 = Console.ReadLine();
+            int m = s2.Length;
+            int count = 0;
+            if (n==m)
+            {
+                
+                for (int i = n - 1; i >= 0; i--)
+                {
+                    if(s1[i] == s2[i])
+                    {
+                        count++;
+                        
+                    }
+                }
+
+            }
+            if(count==n)
+            {
+                Console.WriteLine("equal");
+            }
+            else
+            {
+                Console.WriteLine("not equal");
+            }
+            
+            Console.Read();
+        }
+    }
+}

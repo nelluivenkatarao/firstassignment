@@ -1,0 +1,77 @@
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace student
+{
+    class student
+    {
+        int rollNo;
+        string name;
+        string classname;
+        int semister;
+        string branch;
+        int sum = 0;
+        int avg;
+        int[] marks = new int[5];
+        public student(int roll, string nam, string csname, int sem, string bran)
+        {
+            rollNo = roll;
+            name = nam;
+            classname = csname;
+            semister = sem;
+            branch = bran;
+         }
+            void displayresult()
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    Console.WriteLine("Enter the sub {0} marks of Student :", i + 1);
+                    marks[i] = Convert.ToInt32(Console.ReadLine());
+                }
+                for (int i = 0; i < 5; i++)
+                {
+                    sum = sum + marks[i];
+                }
+                avg = sum / 5;
+                Console.WriteLine("The Average of student in 5 subjects is: {0}", avg);
+            int count = 0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (marks[i] < 35)
+                {
+                    count = 1;
+                }
+            }
+            if(count==1)
+            {
+                Console.WriteLine("Student result is failed");
+            }
+            else if (avg < 50)
+             {
+                Console.WriteLine("Student result is failed");
+             }
+             else
+             {
+                    Console.WriteLine("Student result is passes");
+             }
+           }
+        public void displaydata()
+        {
+            Console.WriteLine("The Student details are:");
+            Console.WriteLine("rollNo:" + rollNo + "\n" + "name:" + name + "\n" + "Class:" + classname + "\n" + "Semister:" + semister + "\n" + "Branch:" + branch);
+            displayresult();
+         }
+        static void Main()
+        {
+            student s = new student(554, "venkatarao", "btech", 8, "cse");
+        
+            s.displaydata();
+            Console.ReadLine();
+        }
+    }
+}

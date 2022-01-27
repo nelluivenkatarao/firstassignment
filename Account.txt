@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Reverse
+{
+    class Account
+    {
+        int Accountno;
+        string Customername;
+        string Accounttype;
+        string Transactiontype;
+        int amount;
+        int balance;
+        public Account(int ano, string cname, string atype, string ttype, int am, int bal)
+        {
+            Accountno = ano;
+            Customername = cname;
+            Accounttype = atype;
+            Transactiontype = ttype;
+            amount = am;
+            balance = bal;
+            string s2 = "deposite";
+            if (Transactiontype.Equals(s2))
+            {
+                amount = credit(amount);
+            }
+            else
+            {
+                amount = debit(amount);
+            }
+            int credit(int amoun)
+            {
+                balance = amoun + balance;
+                return balance;
+            }
+            int debit(int amoun)
+            {
+                balance = amoun + balance;
+                return balance;
+
+            }
+        }
+           public void show()
+
+            {
+                Console.WriteLine("account name:{0},customer name:{1},balance:{2}", Accountno, Customername, amount);
+            }
+     
+    }
+    class Program
+    {
+        
+        static void Main(string[] args) 
+        {
+            Account p=new Account(123,"venkatarao","savings","deposite",9999,100000);
+            p.show();
+            Console.Read();
+        }
+    }
+}
