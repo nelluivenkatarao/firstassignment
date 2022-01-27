@@ -16,10 +16,14 @@ namespace Hello
                 int a = int.Parse(Console.ReadLine());
                 int b = int.Parse(Console.ReadLine());
                 int c = int.Parse(Console.ReadLine());
-                int d = a + b + c;
+                float d = (a + b + c)/3;
                 if (d > 50)
                 {
                     Console.WriteLine("student{0}pass", i + 1);
+                }
+                else
+                {
+                    Console.WriteLine("student{0}failed", i + 1);
                 }
             }
 
