@@ -1,0 +1,50 @@
+
+-->1. List all employees whose name begins with 'A'.
+     select *from emp where Empname like 'A%'
+
+-->2. Select all those employees who don't have a manager. 
+     select *from Emp where MGR is null
+
+-->3. List employee name, number and salary for those employees who earn in the range 1200 to 1400. 
+     select Empname,Empno,Sal from emp where sal between 1200 and 1400
+
+-->4. Give all the employees in the RESEARCH department a 10% pay rise. Verify that this has been done by listing all their details before and after the rise. 
+     select DeptId,Empname,Sal ,(Sal+(Sal*10/100)) 'New Sal' from Emp where DeptId=20
+
+-->5. Find the number of CLERKS employed. Give it a descriptive heading. 
+     select count(Job) 'No.Of.Clerks' from Emp where Job='Clerk'
+
+-->6. Find the average salary for each job type and the number of people employed in each job. 
+     select Job,count(*) 'Count Of Emp',avg(sal) 'Sal Avg' from Emp group by(Job)
+
+-->7. List the employees with the lowest and highest salary. 
+     select Empname,Sal from Emp
+     where Sal=(select(min(sal) )from emp)
+     select Empname,Sal from Emp
+     where Sal=(select(max(sal) )from emp)
+
+-->8. List full details of departments that don't have any employees. 
+     select *from dept where deptno not in (select DeptId from Emp)
+
+-->9. Get the names and salaries of all the analysts earning more than 1200 who are based in department 20. Sort the answer by ascending order of name. 
+     select EmpName, sal from EMP
+     where Job = 'ANALYST' and sal > 1200 and DeptId= 20
+     order by EmpName
+
+-->10. For each department, list its name and number together with the total salary paid to employees in that department. 
+      select dname,count(*)deptno,sum(sal) 'Total Sal' from dept,emp 
+      where dept.deptno=emp.deptid
+      group by dname
+
+-->11. Find out salary of both MILLER and SMITH.
+      select Empname,Sal from Emp where Empname='Miller' or Empname='Smith'
+
+-->12. Find out the names of the employees whose name begin with ‘A’ or ‘M’.
+      select Empname from Emp where Empname like 'A%' or Empname like 'M%'
+
+-->13. Compute yearly salary of SMITH. 
+      select empname,Sal,(Sal*12) 'Annual Sal' from Emp where Empname='Smith'
+
+-->14. List the name and salary for all employees whose salary is not in the range of 1500 and 2850. 
+      select Empname,Sal from Emp where Sal not between 1500 and 2850
+
