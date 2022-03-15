@@ -1,0 +1,89 @@
+
+dropdown.aspx
+-------------------------------------------------------
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dropdown.aspx.cs" Inherits="WebApplication5.Dropdown" %>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        Select game Of Your Choice : <asp:DropDownList ID="DropDownList1" runat="server" Height="40px" Width="88px" AutoPostBack="True" OnSelectedIndexChanged="DropDownList1_SelectedIndexChanged">
+    </asp:DropDownList><br /><br/><br />
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <asp:Image ID="Image1" runat="server" Height="450px" Width="550px" /><br /><br /><br />
+     <asp:Button ID="Button1" runat="server" Text="renumeration" Height="35px" Width="50px" OnClick="Button1_Click" />
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     <asp:Label ID="Label1" runat="server" Text="renumeration of the game"></asp:Label>
+     &nbsp;&nbsp;
+    <asp:TextBox ID="TextBox1" runat="server" OnTextChanged="TextBox1_TextChanged"></asp:TextBox>
+    </form>
+</body>
+</html>
+
+
+
+
+
+
+dropdown.aspx.cs
+--------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace WebApplication5
+{
+    public partial class Dropdown : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!Page.IsPostBack)
+            {
+
+                string[] str = new string[] { "Select", "cricket", "khokho", "volleyball", "badmintion" };
+                for (int i = 0; i < str.Length; i++)
+                {
+                    DropDownList1.Items.Add(str[i]);
+                }
+            }
+        }
+
+        protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string str = DropDownList1.Text;
+            Image1.ImageUrl = "~/Images/" + str + ".JPG";
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            if (DropDownList1.SelectedValue == "cricket")
+            {
+                TextBox1.Text = "23000";
+            }
+            else if (DropDownList1.SelectedValue == "khokho")
+            {
+                TextBox1.Text = "89000";
+            }
+            else if (DropDownList1.SelectedValue == "volleyball")
+            {
+                TextBox1.Text = "62000";
+            }
+            else if (DropDownList1.SelectedValue == "badmintion")
+            {
+                TextBox1.Text = "32000";
+            }
+        }
+
+        protected void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
