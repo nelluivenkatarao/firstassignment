@@ -1,0 +1,338 @@
+Controller
+--------------------------------------
+MovieTableController:-
+---------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using MVCWebApplication4.Models;
+
+namespace MVCWebApplication4.Controllers
+{
+    public class MovieTableController : Controller
+    {
+        // GET: MovieTable
+        MoviesEntities1 me = new MoviesEntities1();
+        public ActionResult Index()
+        {
+            return View();
+        }
+        public ActionResult GetMoviesScaffolded()
+        {
+            List<MovieTable> mt = me.MovieTables.ToList();
+            return View(mt);
+        }
+        [HttpGet]
+        public ActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Create(MovieTable MT)
+        {
+            me.MovieTables.Add(MT);
+            me.SaveChanges();
+            return RedirectToAction("GetMoviesScaffolded");
+        }
+        public ActionResult Details(int id)
+        {
+            MovieTable m = me.MovieTables.Find(id);
+            return View(m);
+        }
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            MovieTable ms = me.MovieTables.Find(id);
+            return View(ms);
+        }
+        [HttpPost]
+        public ActionResult Edit(MovieTable mt)
+        {
+            MovieTable n = me.MovieTables.Find(mt.MovieID);
+            n.MovieName = mt.MovieName;
+            n.MovieReleaseDate = mt.MovieReleaseDate;
+            me.SaveChanges();
+            return RedirectToAction("GetMoviesScaffolded");
+        }
+        public ActionResult Delete(int id)
+        {
+            MovieTable md = me.MovieTables.Find(id);
+            me.MovieTables.Remove(md);
+            me.SaveChanges();
+            return RedirectToAction("GetMoviesScaffolded");
+        }
+        public ActionResult GetMovieName(string val)
+        {
+            List<MovieTable> res = (from s in me.MovieTables
+                                    where s.MovieReleaseDate.ToString().Contains(val) || val == null
+                                    select s).ToList();
+            return View(res);
+        }
+    }
+}
+--------------------------------------------------------------------------------------------------
+
+View:-
+-------
+
+
+Create.cshtml
+------------
+@model MVCWebApplication4.Models.MovieTable
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>MovieTable</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.MovieID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MovieID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MovieID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MovieName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MovieName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MovieName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MovieReleaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MovieReleaseDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MovieReleaseDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+
+Details.cshtml
+---------------
+@model MVCWebApplication4.Models.MovieTable
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>MovieTable</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.MovieName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MovieName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MovieReleaseDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MovieReleaseDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MovieID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+
+
+
+
+
+
+Edit.cshtml
+---------------
+@model MVCWebApplication4.Models.MovieTable
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>MovieTable</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.MovieID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MovieName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MovieName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MovieName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MovieReleaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MovieReleaseDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MovieReleaseDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+
+
+Getmoviename.cshtml
+---------------------
+@model IEnumerable<MVCWebApplication4.Models.MovieTable>
+@{
+    ViewBag.Title = "GetMovieName";
+}
+
+<h2>GetMovieName</h2>
+@foreach (var item in Model)
+{
+    <li>@item.MovieID</li>
+    <li>@item.MovieName</li>
+    <li>@item.MovieReleaseDate</li>
+}
+
+
+
+
+
+
+
+GetMoviesScaffolded.cshtml
+----------------------------
+@model IEnumerable<MVCWebApplication4.Models.MovieTable>
+
+@{
+    ViewBag.Title = "GetMoviesScaffolded";
+}
+
+<h2>GetMoviesScaffolded</h2>
+<p>
+    @using (Html.BeginForm("GetMovieName", "MovieTable", FormMethod.Get))
+    {
+        <text><b>Search Movies By Year</b></text> @Html.TextBox("val")<input type="submit" value="val" />}
+</p>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieReleaseDate)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.MovieName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MovieReleaseDate)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MovieID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.MovieID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MovieID })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+
+
+
+
+sql
+---------
+create database Movies
+
+use Movies
+
+create table MovieTable
+(MovieID int primary key ,
+MovieName varchar(20),
+MovieReleaseDate varchar(20))
+
+select *from MovieTable
+drop table MovieTable
+insert into MovieTable values
+(1010,'RadheShyam','11-03-2022'),
+(1011,'RRR','15-03-2022'),
+(1012,'Bahubali','02-05-2015'),
+(1013,'Jathiratnalu','09-02-2021'),
+(1014,'Ghani','12-04-2023'),
+(1015,'Pushpa','13-11-2021'),
+(1016,'Liger','08-05-2024')
