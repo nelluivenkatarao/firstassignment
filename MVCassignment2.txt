@@ -1,0 +1,499 @@
+models
+---------------------------------------------------
+
+StudentDetails.cs
+-----------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MVCWebApplication5.Models
+{
+    [Table("TblStudent")]
+
+    public class StudentDetails
+    {
+        [Key]
+        public int StudentId { get; set; }
+        public int id { get; set; }
+        public string Name { get; set; }
+        public string Branch { get; set; }
+        public string City { get; set; }
+        public int Percentage { get; set; }
+
+    }
+}
+
+
+
+StudentContext
+-----------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data.Entity;
+
+namespace MVCWebApplication5.Models
+{
+    public class StudentContext : DbContext
+    {
+        public StudentContext() : base("name=Students")
+        {
+
+
+
+        }
+        public DbSet<StudentDetails> students { get; set; }
+    }
+}
+
+
+
+
+
+
+Controllers
+-----------------------------
+StudentController.cs
+--------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using MVCWebApplication5.Models;
+
+namespace StudentCodeFirstProject.Controllers
+{
+    public class StudentController : Controller
+    {
+
+        StudentContext sc = new StudentContext();
+        // GET: Student
+        public ActionResult Index()
+        {
+            List<StudentDetails> st = sc.students.ToList();
+            return View(st);
+        }
+        [HttpGet]
+        public ActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Create(StudentDetails sd)
+        {
+            sc.students.Add(sd);
+            sc.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public ActionResult Details(int id)
+        {
+            StudentDetails sd = sc.students.Find(id);
+            return View(sd);
+        }
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            StudentDetails sd = sc.students.Find(id);
+            return View(sd);
+        }
+        [HttpPost]
+        public ActionResult Edit(StudentDetails sd)
+        {
+            StudentDetails std = sc.students.Find(sd.id);
+            std.Name = sd.Name;
+            std.Branch = sd.Branch;
+            std.City = sd.City;
+            std.Percentage = sd.Percentage;
+            sc.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Delete(int id)
+        {
+            StudentDetails sd = sc.students.Find(id);
+            sc.students.Remove(sd);
+            sc.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public ActionResult SearchBYStudentDetails(string option, string str)
+        {
+            if (option == "City")
+            {
+                return View(sc.students.Where(x => x.City == str).ToList());
+            }
+            else if (option == "Percentage")
+            {
+                return View(sc.students.Where(x => x.Percentage.ToString() == str).ToList());
+            }
+            else if (option == "Branch")
+            {
+                return View(sc.students.Where(x => x.Branch == str).ToList());
+            }
+            else
+            {
+                return View(sc.students.Where(x => x.id.ToString() == str).ToList());
+            }
+        }
+    }
+}
+
+
+
+
+
+Views
+----------------------------------------------
+Index.cshtml
+---------------
+@model IEnumerable<StudentCodeFirstProject.Models.StudentDetails>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<p>
+    @using (Html.BeginForm("SearchBYStudentDetails", "Student", FormMethod.Get))
+    {
+<b>Search By:</b> @Html.RadioButton("option", "City")<text>City</text>
+                  @Html.RadioButton("option", "Branch")<text>Branch</text>
+                  @Html.RadioButton("option", "Percentage")<text>Percentage</text>
+                  @Html.RadioButton("option", "StudentId")<text>StudentId</text>
+                  @Html.TextBox("str") <input type="submit" value="submit" /><br />}
+</p>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Branch)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.City)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Percentage)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Branch)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.City)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Percentage)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.StudentId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.StudentId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.StudentId })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+
+
+Create.cshtml
+-----------------------
+@model StudentCodeFirstProject.Models.StudentDetails
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>StudentDetails</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.id, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.id, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Branch, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Branch, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Branch, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Percentage, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Percentage, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Percentage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+
+Details.cshtml
+------------------------
+@model StudentCodeFirstProject.Models.StudentDetails
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>StudentDetails</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Branch)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Branch)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.City)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Percentage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Percentage)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.StudentId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+
+
+Edit.cshtml
+------------------------
+@model StudentCodeFirstProject.Models.StudentDetails
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>StudentDetails</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.StudentId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.id, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.id, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.id, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Branch, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Branch, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Branch, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Percentage, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Percentage, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Percentage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+SearchBYStudentDetails.cs
+-----------------------------
+@model IEnumerable<StudentCodeFirstProject.Models.StudentDetails>
+@{
+    ViewBag.Title = "SearchBYStudentDetails";
+}
+
+<h2>SearchBYStudentDetails</h2>
+<table class="table">
+    <tr>
+        <th>
+            Student Name
+        </th>
+        <th>
+            City
+        </th>
+        <th>
+            Branch
+        </th>
+        <th>
+            Percentage
+        </th>
+        <th></th>
+    </tr>
+ 
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.City
+            </td>
+            <td>
+                @item.Branch
+            </td>
+            <td>
+                @item.Percentage
+            </td>
+ 
+        </tr>
+    }
+</table>
+ 
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+
+
+
+
+
